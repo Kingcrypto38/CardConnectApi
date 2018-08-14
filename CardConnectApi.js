@@ -23,10 +23,22 @@ class CardConnectApi {
       force
     });
 
-    this._sessionKey = response.headers["x-cardconnect-sessionkey"];
+    this._sessionKey = response.headers["x-cardconnect-sessionkey"].split(";");
 
     return {
       connected: response.statusCode === 200 ? true : false
+    };
+  }
+
+  async sendMessage({ hsn, text }) {
+    const response = await this._createClient().post("display", {
+      merchantId: this._merchantId,
+      hsn,
+      text
+    });
+
+    return {
+      delivered: response.statusCode === 200 ? true : false
     };
   }
 

@@ -15,12 +15,25 @@ describe("CardConnectApi", () => {
     assert(terminals.length > 0);
   });
 
-  it.only("should connect to a terminal", async () => {
+  it("should connect to a terminal", async () => {
     const response = await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
 
     assert(response.connected);
+  });
+
+  it.only("should send a message to a terminal", async () => {
+    await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+    const response = await this.api.sendMessage({
+      hsn: process.env.TESTABLE_TERMINAL,
+      text: "hacked bro"
+    });
+
+    assert(response.delivered);
   });
 });
