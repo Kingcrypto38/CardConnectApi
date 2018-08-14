@@ -48,4 +48,18 @@ describe("CardConnectApi", () => {
 
     assert(response.connected);
   });
+
+  it.only("should request a payment", async () => {
+    this.timeout = 10000;
+    await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+    const response = await this.api.readCard({
+      hsn: process.env.TESTABLE_TERMINAL,
+      amount: 1
+    });
+
+    assert(response.connected);
+  });
 });

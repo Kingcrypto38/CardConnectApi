@@ -22,8 +22,9 @@ class CardConnectApi {
       hsn,
       force
     });
-
-    this._sessionKey = response.headers["x-cardconnect-sessionkey"].split(";");
+    this._sessionKey = response.headers["x-cardconnect-sessionkey"].split(
+      ";"
+    )[0];
 
     return {
       connected: response.statusCode === 200 ? true : false
@@ -40,6 +41,22 @@ class CardConnectApi {
     return {
       delivered: response.statusCode === 200 ? true : false
     };
+  }
+
+  async readCard({ hsn, amount }) {
+    console.log("zomg");
+
+    try {
+      const response = await this._client.post("readCard", {
+        merchantId: this._merchantId,
+        hsn,
+        amount
+      });
+      console.log(response, "WWWAAAAAAAAAAAAAAAAAAAAAAA");
+      return response;
+    } catch (e) {
+      return e;
+    }
   }
 
   async ping({ hsn }) {
