@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "assert": "^1.4.1",
+    "httpism": "^3.10.0",
+    "mocha": "^5.2.0"
+  }
+}
