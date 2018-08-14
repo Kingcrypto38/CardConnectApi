@@ -9,7 +9,7 @@ class CardConnectApi {
   }
 
   async listTerminals() {
-    const response = await this._createClient().post("listTerminals", {
+    const response = await this._client.post("listTerminals", {
       merchantId: this._merchantId
     });
 
@@ -17,7 +17,7 @@ class CardConnectApi {
   }
 
   async connectTerminal({ hsn, force }) {
-    const response = await this._createClient().post("connect", {
+    const response = await this._client.post("connect", {
       merchantId: this._merchantId,
       hsn,
       force
@@ -31,7 +31,7 @@ class CardConnectApi {
   }
 
   async sendMessage({ hsn, text }) {
-    const response = await this._createClient().post("display", {
+    const response = await this._client.post("display", {
       merchantId: this._merchantId,
       hsn,
       text
@@ -43,10 +43,14 @@ class CardConnectApi {
   }
 
   async ping({ hsn }) {
-    return this._createClient().post("ping", {
+    return this._client.post("ping", {
       merchantId: this._merchantId,
       hsn
     });
+  }
+
+  get _client() {
+    return this._createClient();
   }
 
   _createClient() {
