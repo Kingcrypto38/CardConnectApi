@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "mocha test.js --timeout 10000"
+    "test": "mocha test.js --timeout 30000"
   },
   "dependencies": {
     "assert": "^1.4.1",

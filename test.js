@@ -49,17 +49,44 @@ describe("CardConnectApi", () => {
     assert(response.connected);
   });
 
-  it.only("should request a payment", async () => {
-    this.timeout = 10000;
+  it("can be cancelled by the user", async () => {
     await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
+
+    console.log('> PRESS CANCEL ON THE TERMINAL NOW <')
+
+    try {
+      await this.api.readCard({
+        hsn: process.env.TESTABLE_TERMINAL,
+        amount: 1
+      });
+    } catch(e) {
+      assert.equal(e.message, 'Command cancelled')
+    }
+  });
+
+  it("should request a payment", async () => {
+    await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+
+    console.log('> SWIPE YOUR CARD ON THE TERMINAL NOW <')
+
     const response = await this.api.readCard({
       hsn: process.env.TESTABLE_TERMINAL,
       amount: 1
     });
 
-    assert(response.connected);
+    // Sample response:
+    // {
+    //   token: '<redacted 16 digit number>',
+    //   expiry: '<redacted 4 digit expiry date>',
+    //   name: '<redacted company name? maybe?>'
+    // }
+
+    assert.equal(response.token.length, 16);
   });
 });

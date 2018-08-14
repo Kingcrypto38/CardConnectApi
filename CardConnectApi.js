@@ -1,5 +1,18 @@
 const httpism = require("httpism");
 
+function CommandCancelledError() {
+  this.name = 'CommandCancelledError';
+  this.message = 'Command cancelled';
+  this.stack = (new Error()).stack;
+}
+CommandCancelledError.prototype = new Error;
+
+function errorTypeForCode(code) {
+  if (code === 8) {
+    return CommandCancelledError
+  }
+}
+
 class CardConnectApi {
   constructor({ baseUrl, merchantId, authorizationHeader }) {
     this._authorizationHeader = authorizationHeader;
@@ -44,18 +57,20 @@ class CardConnectApi {
   }
 
   async readCard({ hsn, amount }) {
-    console.log("zomg");
-
     try {
       const response = await this._client.post("readCard", {
         merchantId: this._merchantId,
         hsn,
         amount
       });
-      console.log(response, "WWWAAAAAAAAAAAAAAAAAAAAAAA");
       return response;
     } catch (e) {
-      return e;
+      const errorType = errorTypeForCode(e.body.errorCode)
+      if (errorType) {
+        throw new errorType()
+      }
+
+      throw e;
     }
   }
 
