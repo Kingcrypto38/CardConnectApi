@@ -42,6 +42,13 @@ class CardConnectApi {
     };
   }
 
+  async ping({ hsn }) {
+    return this._createClient().post("ping", {
+      merchantId: this._merchantId,
+      hsn
+    });
+  }
+
   _createClient() {
     const defaultHeaders = {
       "content-type": "application/json",

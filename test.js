@@ -24,7 +24,7 @@ describe("CardConnectApi", () => {
     assert(response.connected);
   });
 
-  it.only("should send a message to a terminal", async () => {
+  it("should send a message to a terminal", async () => {
     await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
@@ -35,5 +35,17 @@ describe("CardConnectApi", () => {
     });
 
     assert(response.delivered);
+  });
+
+  it("should ping the terminal", async () => {
+    await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+    const response = await this.api.ping({
+      hsn: process.env.TESTABLE_TERMINAL
+    });
+
+    assert(response.connected);
   });
 });
