@@ -14,4 +14,13 @@ describe("CardConnectApi", () => {
     const terminals = await this.api.listTerminals();
     assert(terminals.length > 0);
   });
+
+  it.only("should connect to a terminal", async () => {
+    const response = await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+
+    assert(response.connected);
+  });
 });
