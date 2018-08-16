@@ -1,4 +1,8 @@
 {
+  "name": "card-connect-api",
+  "version": "1.0.1",
+  "description": "Node Wrapper for CardConnectApi",
+  "main": "CardConnectApi.js",
   "scripts": {
     "test": "mocha test.js --timeout 30000"
   },
