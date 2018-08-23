@@ -1,16 +1,42 @@
 const httpism = require("httpism");
 
 function CommandCancelledError() {
-  this.name = 'CommandCancelledError';
-  this.message = 'Command cancelled';
-  this.stack = (new Error()).stack;
+  this.name = "CommandCancelledError";
+  this.message = "User cancelled";
+  this.stack = new Error().stack;
 }
-CommandCancelledError.prototype = new Error;
+
+function TerminalOfflineError() {
+  this.name = "TerminalOfflineError";
+  this.message = "Terminal is offline";
+  this.stack = new Error().stack;
+}
+
+function TerminalInUseError() {
+  this.name = "TerminalInUseError";
+  this.message = "Terminal is in use";
+  this.stack = new Error().stack;
+}
+
+function TerminalGeneralError() {
+  this.name = "TerminalGeneralError";
+  this.message = "Something went wrong";
+  this.stack = new Error().stack;
+}
+
+CommandCancelledError.prototype = new Error();
 
 function errorTypeForCode(code) {
   if (code === 8) {
-    return CommandCancelledError
+    return CommandCancelledError;
   }
+  if (code === 7) {
+    return TerminalInUseError;
+  }
+  if (code === 6) {
+    return TerminalOfflineError;
+  }
+  return TerminalGeneralError;
 }
 
 class CardConnectApi {
@@ -22,60 +48,44 @@ class CardConnectApi {
   }
 
   async listTerminals() {
-    const response = await this._client.post("listTerminals", {
+    return this._post("listTerminals", {
       merchantId: this._merchantId
-    });
-
-    return response.terminals;
+    }).then(response => response.terminals);
   }
 
   async connectTerminal({ hsn, force }) {
-    const response = await this._client.post("connect", {
+    return this._post("connect", {
       merchantId: this._merchantId,
       hsn,
       force
+    }).then(response => {
+      this._sessionKey = response.headers["x-cardconnect-sessionkey"].split(
+        ";"
+      )[0];
+      return response.statusCode === 200 ? true : false;
     });
-    this._sessionKey = response.headers["x-cardconnect-sessionkey"].split(
-      ";"
-    )[0];
-
-    return {
-      connected: response.statusCode === 200 ? true : false
-    };
   }
 
   async sendMessage({ hsn, text }) {
-    const response = await this._client.post("display", {
+    return this._post("display", {
       merchantId: this._merchantId,
       hsn,
       text
+    }).then(response => {
+      return response.statusCode === 200 ? true : false;
     });
-
-    return {
-      delivered: response.statusCode === 200 ? true : false
-    };
   }
 
   async readCard({ hsn, amount }) {
-    try {
-      const response = await this._client.post("readCard", {
-        merchantId: this._merchantId,
-        hsn,
-        amount
-      });
-      return response;
-    } catch (e) {
-      const errorType = errorTypeForCode(e.body.errorCode)
-      if (errorType) {
-        throw new errorType()
-      }
-
-      throw e;
-    }
+    return this._post("readCard", {
+      merchantId: this._merchantId,
+      hsn,
+      amount
+    });
   }
 
   async ping({ hsn }) {
-    return this._client.post("ping", {
+    return this._post("ping", {
       merchantId: this._merchantId,
       hsn
     });
@@ -83,6 +93,13 @@ class CardConnectApi {
 
   get _client() {
     return this._createClient();
+  }
+
+  _post(path, options) {
+    return this._client.post(path, options).catch(e => {
+      const errorType = errorTypeForCode(e.body.errorCode);
+      throw { error: new errorType() };
+    });
   }
 
   _createClient() {

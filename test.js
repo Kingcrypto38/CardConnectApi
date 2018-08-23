@@ -16,12 +16,12 @@ describe("CardConnectApi", () => {
   });
 
   it("should connect to a terminal", async () => {
-    const response = await this.api.connectTerminal({
+    const connected = await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
 
-    assert(response.connected);
+    assert(connected);
   });
 
   it("sets the terminal message", async () => {
@@ -29,12 +29,12 @@ describe("CardConnectApi", () => {
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
-    const response = await this.api.sendMessage({
+    const delivered = await this.api.sendMessage({
       hsn: process.env.TESTABLE_TERMINAL,
       text: "hacked bro"
     });
 
-    assert(response.delivered);
+    assert(delivered);
   });
 
   it("clears the terminal message", async () => {
@@ -42,12 +42,12 @@ describe("CardConnectApi", () => {
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
-    const response = await this.api.sendMessage({
+    const cleared = await this.api.sendMessage({
       hsn: process.env.TESTABLE_TERMINAL,
-      text: ''
+      text: ""
     });
 
-    assert(response.delivered);
+    assert(cleared);
   });
 
   it("should ping the terminal", async () => {
@@ -62,21 +62,21 @@ describe("CardConnectApi", () => {
     assert(response.connected);
   });
 
-  it("can be cancelled by the user", async () => {
+  it.only("can be cancelled by the user", async () => {
     await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
     });
 
-    console.log('> PRESS CANCEL ON THE TERMINAL NOW <')
+    console.log("> PRESS CANCEL ON THE TERMINAL NOW <");
 
     try {
       await this.api.readCard({
         hsn: process.env.TESTABLE_TERMINAL,
         amount: 1
       });
-    } catch(e) {
-      assert.equal(e.message, 'Command cancelled')
+    } catch (e) {
+      assert.equal(e.error.message, "User cancelled");
     }
   });
 
@@ -86,7 +86,7 @@ describe("CardConnectApi", () => {
       force: true
     });
 
-    console.log('> SWIPE YOUR CARD ON THE TERMINAL NOW <')
+    console.log("> SWIPE YOUR CARD ON THE TERMINAL NOW <");
 
     const response = await this.api.readCard({
       hsn: process.env.TESTABLE_TERMINAL,
