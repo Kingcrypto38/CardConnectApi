@@ -62,7 +62,7 @@ describe("CardConnectApi", () => {
     assert(response.connected);
   });
 
-  it.only("can be cancelled by the user", async () => {
+  it("can be cancelled by the user", async () => {
     await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
