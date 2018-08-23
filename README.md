@@ -8,6 +8,12 @@
 
 ```
 const CardConnectApi = require("card-connect-api");
+
+this.api = new CardConnectApi({
+  baseUrl: process.env.BASE_URL,
+  merchantId: process.env.MERCHANT_ID,
+  authorizationHeader: process.env.AUTHORIZATION
+});
 ```
 
 ## List all terminals
@@ -37,7 +43,7 @@ await this.api.connectTerminal({
 });
 ```
 
-## Read Card
+## Read Card Present
 
 ```
 await this.api.connectTerminal({
@@ -45,6 +51,19 @@ await this.api.connectTerminal({
   force: true
 });
 await this.api.readCard({
+  hsn: process.env.TESTABLE_TERMINAL,
+  amount: 1
+});
+```
+
+## Read Card Manual
+
+```
+await this.api.connectTerminal({
+  hsn: process.env.TESTABLE_TERMINAL,
+  force: true
+});
+await this.api.readManual({
   hsn: process.env.TESTABLE_TERMINAL,
   amount: 1
 });

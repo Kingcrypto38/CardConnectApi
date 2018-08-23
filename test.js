@@ -80,7 +80,7 @@ describe("CardConnectApi", () => {
     }
   });
 
-  it("should request a payment", async () => {
+  it("should request a card present payment", async () => {
     await this.api.connectTerminal({
       hsn: process.env.TESTABLE_TERMINAL,
       force: true
@@ -99,6 +99,22 @@ describe("CardConnectApi", () => {
     //   expiry: '<redacted 4 digit expiry date>',
     //   name: '<redacted company name? maybe?>'
     // }
+
+    assert.equal(response.token.length, 16);
+  });
+
+  it("should request a manual card payment", async () => {
+    await this.api.connectTerminal({
+      hsn: process.env.TESTABLE_TERMINAL,
+      force: true
+    });
+
+    console.log("> ENTER YOUR CARD ON THE TERMINAL NOW <");
+
+    const response = await this.api.readManual({
+      hsn: process.env.TESTABLE_TERMINAL,
+      amount: 1
+    });
 
     assert.equal(response.token.length, 16);
   });

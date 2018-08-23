@@ -46,6 +46,14 @@ class CardConnectApi {
     });
   }
 
+  async readManual({ hsn, amount }) {
+    return this._post("readManual", {
+      merchantId: this._merchantId,
+      hsn,
+      amount
+    });
+  }
+
   async ping({ hsn }) {
     return this._post("ping", {
       merchantId: this._merchantId,
