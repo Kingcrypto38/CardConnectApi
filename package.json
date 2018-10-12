@@ -1,6 +1,6 @@
 {
   "name": "card-connect-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Node Wrapper for CardConnectApi",
   "main": "CardConnectApi.js",
   "scripts": {
