@@ -4,7 +4,7 @@
   "description": "Node Wrapper for CardConnectApi",
   "main": "CardConnectApi.js",
   "scripts": {
-    "test": "mocha test.js --timeout 300000"
+    "test": "mocha test.js"
   },
   "dependencies": {
     "assert": "^1.4.1",
